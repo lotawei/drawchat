@@ -119,7 +119,9 @@ function bancidetaillocdata() {
 }
 
 function  urlapi(type){
-    var  baseip =  "http://192.168.2.122:6789";
+
+    //income
+    var  baseip =  "http://112.74.40.157:6789";
     var   urls = {
         'index':baseip +'/orderByDateRange?start=yyyy1-ssss&end=yyyy2-dddd',
          'niandu':baseip +'/tripByDateRange?start=ssss&end=eeee',
@@ -134,7 +136,118 @@ function  urlapi(type){
 
 }
 
+function   getoptions() {
 
+       var options = {
+        title : {
+            text: '当月订单人数统计',
+            subtext: '纯属搞着玩'
+        },
+        tooltip : {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['人数','订单数','销售金额']
+        },
+        //右上角工具条
+        toolbox: {
+            show : true,
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                magicType : {show: true, type: ['line', 'bar']},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        calculable : true,
+        xAxis : [
+            {
+                type : 'category',
+                boundaryGap : false,
+                data : ['周一','周二','周三','周四','周五','周六','周日']
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value',
+                axisLabel : {
+                    formatter: '{value} '
+                }
+            }
+        ],
+        series : [
+            {
+                name:'人数',
+                type:'line',
+                data:[11, 11, 15, 13, 12, 13, 10],
+                markPoint : {
+                    data : [
+                        {type : 'max', name: '最大值'},
+                        {type : 'min', name: '最小值'}
+                    ]
+                },
+                markLine : {
+                    data : [
+                        {type : 'average', name: '平均值'}
+                    ]
+                }
+            },
+            {
+                name:'订单数',
+                type:'line',
+                data:[1, 10, 2, 5, 3, 2, 0],
+                markPoint : {
+                    data : [
+//                        {name : '周最低', value : -2, xAxis: 1, yAxis: -1.5}
+                        {type : 'min', name: '周最低'}
+                    ]
+                },
+                markLine : {
+                    data : [
+                        {type : 'average', name : '平均值'}
+                    ]
+                }
+            },
+            {
+                name:'销售金额',
+                type:'line',
+                data:[1, 10, 2, 5, 3, 2, 0],
+                markPoint : {
+                    data : [
+//                        {name : '周最低', value : -2, xAxis: 1, yAxis: -1.5}
+                        {type : 'min', name: '周最低'}
+                    ]
+                },
+                markLine : {
+                    data : [
+                        {type : 'average', name : '平均值'}
+                    ]
+                }
+            }
+        ]
+    };
+       return  options;
+}
+function  getvactionmap() {
+  var  ca =   {  '01-01':'元旦节',
+        '02-14':'情人节',
+        '03-08':'妇女节',
+        '04-05':'清明节',
+        '05-01':'劳动节',
+        '06-01':'儿童节',
+        '09-10':'教师节',
+        '10-01':'国庆节',
+        '12-25':'圣诞节',
+        '01-27':'春节',
+        '02-11':'元宵节',
+        '05-30':'端午节',
+        '08-28':'七夕节',
+        '10-04':'中秋节',
+        '10-28':'重阳节'
+    };
+  return  ca;
+}
 
 
 
