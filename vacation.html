@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <script src= "jshelper.js"></script>
+    <script src= "echarts.min.js"></script>
+    <title>各项趋势图</title>
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div id="top" style="width: 100%;height: 70px;position: relative" >
+    <nav class="navbar navbar-inverse navbar-fixed-top ">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" style=" color: white" href="#">各项统计趋势图</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li  ><button   class="btn btn-primary ymwatch ">年月查看</button></li>
+                    <li ><button class=" btn btn-primary vocationwatch " >节假日</button></li>
+                    <li ><button class=" btn btn-primary banciwatch " >班次客流量</button></li>
+                    <li ><button  class=" btn btn-primary totalwatch ">总客流量</button></li>
+
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+</div>
+<div class="btn-group dropdown " id="ylist">
+    <button class="btn btn-primary" style="background-color: black;width: 80px" disabled="disabled" >年份： </button>
+    <!--当前年份-->
+    <button type="button" class="btn btn-primary dropdown-toggle" id="btncury" style="background-color: black" data-toggle="dropdown">2017
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu" id="yearlist">
+        <li>
+            <button id="bt17" class="btn-primary">2017</button>
+        </li>
+        <li>
+            <button id="bt16" class="btn-primary">2016</button>
+        </li>
+        <li>
+            <button id="bt15" class="btn-primary">2015</button>
+        </li>
+        <li>
+            <button id="btother" class="btn-primary">---</button>
+        </li>
+
+    </ul>
+</div>
+<div class="btn-group dropdown" id="mlist">
+    <button class="btn btn-primary" id="lbldis" style="background-color: black;width: 80px" disabled="disabled" >假期： </button>
+    <!-- 当前月份 -->
+    <button type="button" class="btn btn-primary dropdown-toggle" id="btnvacation" style="background-color: black" data-toggle="dropdown">元旦
+        <span class="caret" ></span>
+    </button>
+    <ul class="dropdown-menu"  role="menu" id="vacationlist" aria-labelledby="btnvacation">
+
+        <li>
+            <button id="m1" class="btn-primary">元旦</button>
+        </li>
+        <li>
+            <button id="m2" class="btn-primary">情人</button>
+        </li>
+        <li>
+            <button id="m3" class="btn-primary">妇女</button>
+        </li>
+        <li>
+            <button id="m4" class="btn-primary">清明</button>
+        </li>
+        <li>
+            <button id="m5" class="btn-primary">劳动</button>
+        </li>
+        <li>
+            <button id="m6" class="btn-primary">儿童</button>
+        </li>
+        <li>
+            <button id="m7" class="btn-primary">教师</button>
+        </li>
+        <li>
+            <button id="m8" class="btn-primary">国庆</button>
+        </li>
+        <li>
+            <button id="m9" class="btn-primary">圣诞</button>
+        </li>
+        <li>
+            <button id="m10" class="btn-primary">春节</button>
+        </li>
+        <li>
+            <button id="m15" class="btn-primary">元宵</button>
+        </li>
+
+
+        <li>
+            <button id="m11" class="btn-primary">端午</button>
+        </li>
+        <li>
+            <button id="m12" class="btn-primary">七夕</button>
+
+        </li>
+        <li>
+            <button id="m13" class="btn-primary">中秋</button>
+
+        </li>
+        <li>
+            <button id="m14" class="btn-primary">重阳</button>
+        </li>
+    </ul>
+</div>
+<div id="container" style="width: 100%;height:500px;margin-top: 20px" >
+</div>
+</body>
+</html>
+<style>
+
+    #bt15,#bt16,#btother,#bt17,#m1,#m15,#m2, #m3,#m4,#m5,#m6,#m7,#m8,#m9,#m10,#m11,#m12,#m13,#m14,#btmonth{
+        background-color: black;
+        width: 100%;
+    }
+
+
+
+    .ymwatch,.totalwatch,.banciwatch,.vocationwatch{
+        margin-top: 10px;
+        background-color: black;
+    }
+    .ymwatch.active,.totalwatch.active,.banciwatch.active,.vocationwatch.active{
+        color: white;
+    }
+
+    .caret{
+        border-left: 4px solid;
+        border-top: 4px solid transparent;
+        border-bottom: 4px solid transparent;
+        height: 0px;
+        width: 0px;
+        line-height: normal;
+        display: inline-block;
+    }
+
+
+</style>
+<script type="text/javascript">
+
+    // 分类查看类型
+
+
+    //节假日
+    var   vocationsmap = {  '01-01':'元旦节',
+        '02-14':'情人节',
+        '03-08':'妇女节',
+        '04-05':'清明节',
+        '05-01':'劳动节',
+        '06-01':'儿童节',
+        '09-10':'教师节',
+        '10-01':'国庆节',
+        '12-25':'圣诞节',
+        '01-27':'春节',
+        '02-11':'元宵节',
+        '05-30':'端午节',
+        '08-28':'七夕节',
+        '10-04':'中秋节',
+        '10-28':'重阳节'
+    };
+    var  xaixs = [];
+
+    //
+    var   mychart = echarts.init(document.getElementById('container'));
+
+
+
+
+    var   curyear = $("#curyear").text();
+    var   curvaca = $("#btnvacation").text();
+    var options = {
+        title : {
+            text: '当月订单人数统计',
+            subtext: '纯属搞着玩'
+        },
+        tooltip : {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['人数','订单数']
+        },
+        //右上角工具条
+        toolbox: {
+            show : true,
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                magicType : {show: true, type: ['line', 'bar']},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        calculable : true,
+        xAxis : [
+            {
+                type : 'category',
+                boundaryGap : false,
+                data : ['周一','周二','周三','周四','周五','周六','周日']
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value',
+                axisLabel : {
+                    formatter: '{value} '
+                }
+            }
+        ],
+        series : [
+            {
+                name:'人数',
+                type:'line',
+                data:[11, 11, 15, 13, 12, 13, 10],
+                markPoint : {
+                    data : [
+                        {type : 'max', name: '最大值'},
+                        {type : 'min', name: '最小值'}
+                    ]
+                },
+                markLine : {
+                    data : [
+                        {type : 'average', name: '平均值'}
+                    ]
+                }
+            },
+            {
+                name:'订单数',
+                type:'line',
+                data:[1, 10, 2, 5, 3, 2, 0],
+                markPoint : {
+                    data : [
+//                        {name : '周最低', value : -2, xAxis: 1, yAxis: -1.5}
+                        {type : 'min', name: '周最低'}
+                    ]
+                },
+                markLine : {
+                    data : [
+                        {type : 'average', name : '平均值'}
+                    ]
+                }
+            }
+        ]
+    };
+
+
+
+    $(function() {
+//        配置 页面信息
+
+
+        $('.ymwatch  , .banciwatch,.vocationwatch , .totalwatch').click(function(e){//给id为btn的元素添加点击事件
+
+
+
+            var atargtet = $(e.target);
+            if  (atargtet.text() == "年月查看"){
+
+                $(window).attr('location','Index.html');
+
+            }
+
+            else if  (atargtet.text() == "班次客流量") {
+
+                $(window).attr('location', 'rangetotal.html');
+
+            }
+            else if  (atargtet.text() == "总客流量") {
+
+                $(window).attr('location', 'total.html');
+
+            }
+
+
+        });
+
+
+        $('#yearlist').on('click', function(e) {
+            //获取到点击的dom对象
+            var atarget = $(e.target);
+            $('#btncury').html(atarget.text());
+
+
+            updateinfo();
+
+        })
+
+
+        $('#vacationlist').on('click', function(e) {
+            //获取到点击的dom对象
+            var atarget = $(e.target);
+            $('#btnvacation').html(atarget.text());
+
+            curvaca =  atarget.text();
+
+
+
+            updateinfo();
+        })
+
+
+        updateinfo();
+
+
+    });
+    //当前打的分类
+
+
+
+
+
+
+    
+
+    //     更新绘图
+    function updateinfo() {
+
+       var  baseurl = urlapi('vacation');
+        var   xaixs  =  getdays($.trim(curvaca));
+
+
+        options['xAxis'][0]['data'] =  xaixs;
+
+//
+        var  starid =  xaixs[0];
+        var  endid =  xaixs[xaixs.length - 1];
+
+        baseurl = baseurl.replace('ssss',starid);
+
+        baseurl = baseurl.replace('dddd',endid);
+
+        var   peplecounts =[];
+        //事先初始化一个数组
+        for  (var  i = 0 ;i<xaixs.length;i++){
+            peplecounts.push(0);
+        }
+        console.log(baseurl)
+        var   ordercounts = [];
+
+        for  (var  i = 0 ;i<xaixs.length;i++){
+            ordercounts.push(0);
+        }
+
+        $.ajax({
+            url:baseurl,
+            type:'get',
+            success:function (data) {
+
+
+                var   json = eval(data);
+                var   datas = json['data'];
+
+                //当前月份和当前
+                if  (datas.length == xaixs.length){
+                    peplecounts = [];
+                    ordercounts = [];
+                    //天数相同的  直接赋值
+                    for  (var  i = 0 ; i<datas.length;i++){
+//每天都有直接一一对应了 直接赋值
+                        peplecounts[i] = datas[i]['peopleCount'];
+                        ordercounts[i] = datas[i]['orderCount'];
+
+
+                    }
+                }
+                //表示当前月份有些天没有
+                else  {
+                    //遍历拿到 具有数据的天数
+                    var hasdatasdays = [];
+                    for  (var  i = 0 ; i<datas.length;i++){
+
+                        var   date = datas[i]['date'];
+                        var  am = date.substring(5,7);
+                        var  aday = date.substring(8,10);
+
+
+                        hasdatasdays.push (  am + '-' + PrefixInteger(aday));
+
+
+                    }
+
+
+
+                    for  (var  i = 0 ;i<hasdatasdays.length;i++) {
+                            //先做一个表映射
+                          var   mmdate = hasdatasdays[i];
+                         if  ( typeof(vocationsmap[mmdate])!='undefined'){
+                         if (funcChina(vocationsmap[mmdate]) == false){
+
+
+                             mmdate =  vocationsmap[mmdate];
+                         }
+                         }
+                         var  index  = xaixs.indexOf(mmdate);
+                         peplecounts[index] = datas[i]['peopleCount'];
+                         ordercounts[index] = datas[i]['orderCount'];
+
+                    }
+
+                }
+
+                options['series'][0]['data'] = peplecounts;
+
+
+
+                options['series'][1]['data'] = ordercounts;
+
+                var   newxaix = [];
+                for   (i = 0; i<xaixs.length;i++){
+
+
+                    var  detail = curyear + '-' +xaixs[i];
+                    var   week = getWeek(xaixs[i]);
+                    var   base =  xaixs[i] +   week;
+
+                    newxaix.push(base);
+
+                }
+                options['xAxis'][0]['data'] = newxaix;
+
+
+                mychart.setOption(options);
+
+
+
+            },
+            error:function (error) {
+                var  json  = indexlocdata();
+
+                var   datas = json['data'];
+
+                //当前月份和当前
+                if  (datas.length == days){
+                    peplecounts = [];
+                    ordercounts = [];
+                    //天数相同的  直接赋值
+                    for  (var  i = 0 ; i<datas.length;i++){
+                        peplecounts.push(datas[i]['pepleCount']);
+                        ordercounts.push(datas[i]['orderCount']);
+                    }
+                }
+                //表示当前月份有些天没有
+                else  {
+                    //遍历拿到 具有数据的天数
+                    var hasdatasdays = [];
+                    for  (var  i = 0 ; i<datas.length;i++){
+                        var   date = datas[i]['date'];
+                        var  aday = date.substring(8,10);
+                        hasdatasdays.push(parseInt(aday) );
+                    }
+                    for  (var  i = 0 ;i<hasdatasdays.length;i++) {
+                        var  index = hasdatasdays[i] - 1;
+                        peplecounts[index] = datas[i]['peopleCount'];
+                        ordercounts[index] = datas[i]['orderCount'];
+                    }
+                }
+                options['series'][0]['data'] = peplecounts;
+                options['series'][1]['data'] = ordercounts;
+                mychart.setOption(options);
+
+            }
+
+
+
+        });
+
+
+
+
+
+
+    }
+    //根据选择 设置参数
+    function  getdays(type) {
+       if (type == '元旦'){
+
+           return   ['12-29','12-30','12-31','元旦节','01-02','01-03','01-04'];
+
+       }
+      else  if (type == '情人'){
+
+            return   ['02-11','02-12','02-13','情人节','02-15','02-16','02-17'];
+
+        }
+       else if (type == '妇女'){
+
+            return   ['03-05','03-06','03-07','妇女节','03-09','03-10','03-11'];
+
+        }
+
+       else if (type == '劳动'){
+
+            return   ['04-28','04-29','04-30','劳动节','05-02','05-03','05-04'];
+
+        }
+        else if (type == '儿童'){
+
+            return   ['05-29','05-30','05-31','儿童节','06-02','06-03','06-04'];
+
+        }
+       else if (type == '教师'){
+
+            return    ['09-07','09-08','09-09','教师节','09-11','09-12','09-13'];
+
+        }
+       else if (type == '国庆'){
+
+            return    ['09-29','09-30','09-31','国庆节','10-02','10-03','10-04','10-05','10-06','10-07','10-08','10-09','10-10','10-11','10-12'];
+
+        }
+        else  if  (type == '圣诞'){
+           return   ['12-22','12-23','12-24','圣诞节','12-26','12-27','12-28'];
+       }
+
+       //以下是农历天数有需变化自行设置
+       else if  (type == '春节'){
+           return   ['01-19','01-20','01-21','01-22','01-23','01-24','01-25','01-26','除夕','01-28','01-29','01-30','01-31','02-01','02-02','02-03','02-04'];
+
+       }
+       else if  (type == '元宵'){
+           return    ['02-08','02-09','02-10','元宵','02-12','02-13','02-14'];
+       }
+       else if (type == '清明'){
+
+           return   ['04-02','04-03','04-04','清明节','04-06','04-07','04-08'];
+
+       }
+
+       else if  (type == '端午'){
+           return   ['05-27','05-28','05-29','端午节','05-30','05-31','06-01'];
+       }
+       else if  (type == '七夕'){
+           return   ['08-25','08-26','08-27','七夕节','08-29','08-30','09-01'];
+       }
+       else if  (type == '中秋'){
+           return   ['10-01','10-02','10-03','中秋节','10-05','10-06','10-07'];
+       }
+       else if  (type == '重阳'){
+           return   ['10-25','10-26','10-27','重阳节','10-29','10-30','10-31'];
+       }
+
+
+    }
+
+
+
+</script>

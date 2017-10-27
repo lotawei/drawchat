@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+
+    <script src= "echarts.min.js"></script>
+    <script src= "jshelper.js"></script>
+    <title>各项趋势图</title>
+
+    <!-- Bootstrap core CSS -->
+
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <<script type="text/javascript" src="jshelper.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div id="top" style="width: 100%;height: 70px;position: relative" >
+<nav class="navbar navbar-inverse navbar-fixed-top ">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" style=" color: white" href="#">各项统计趋势图</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li  ><button   class="btn btn-primary ymwatch ">年月查看</button></li>
+                <li ><button class=" btn btn-primary vocationwatch " >节假日</button></li>
+                <li ><button class=" btn btn-primary banciwatch " >班次客流量</button></li>
+                <li ><button  class=" btn btn-primary totalwatch ">总客流量</button></li>
+
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+</div>
+<div class="btn-group dropdown " id="ylist">
+    <button class="btn btn-primary" style="background-color: black;width: 80px" disabled="disabled" >年份： </button>
+    <!--当前年份-->
+    <button type="button" class="btn btn-primary dropdown-toggle" id="btncury" style="background-color: black" data-toggle="dropdown">未知
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu" id="yearlist">
+        <li>
+            <button id="bt17" class="btn-primary">2017</button>
+        </li>
+        <li>
+            <button id="bt16" class="btn-primary">2016</button>
+        </li>
+
+        <li>
+            <button id="btother" class="btn-primary">---</button>
+        </li>
+
+    </ul>
+</div>
+<div class="btn-group dropdown" id="mlist">
+    <button class="btn btn-primary" id="lbldis" style="background-color: black;width: 80px" disabled="disabled" >月份： </button>
+    <!-- 当前月份 -->
+    <button type="button" class="btn btn-primary dropdown-toggle" id="btncurm" style="background-color: black" data-toggle="dropdown">未知
+        <span class="caret" ></span>
+    </button>
+    <ul class="dropdown-menu"  role="menu" id="monthlist" aria-labelledby="btncurm">
+
+        <li>
+            <button id="m1" class="btn-primary">1</button>
+        </li>
+        <li>
+            <button id="m2" class="btn-primary">2</button>
+        </li>
+        <li>
+            <button id="m3" class="btn-primary">3</button>
+        </li>
+        <li>
+            <button id="m4" class="btn-primary">4</button>
+        </li>
+        <li>
+            <button id="m5" class="btn-primary">5</button>
+        </li>
+        <li>
+            <button id="m6" class="btn-primary">6</button>
+        </li>
+        <li>
+            <button id="m7" class="btn-primary">7</button>
+        </li>
+        <li>
+            <button id="m8" class="btn-primary">8</button>
+        </li>
+        <li>
+            <button id="m9" class="btn-primary">9</button>
+        </li>
+        <li>
+            <button id="m10" class="btn-primary">10</button>
+        </li>
+
+        <li>
+            <button id="m11" class="btn-primary">11</button>
+        </li>
+        <li>
+            <button id="m12" class="btn-primary">12</button>
+
+        </li>
+
+    </ul>
+</div>
+
+
+<div id="container" style="width: 100%;height:500px;margin-top: 20px" >
+
+
+
+</div>
+
+<img id="aimag" src="">
+
+</body>
+</html>
+
+
+<style>
+
+    #btnfuck,#bt15,#bt16,#btother,#bt17,#m1,#m2, #m3,#m4,#m5,#m6,#m7,#m8,#m9,#m10,#m11,#m12,#btmonth{
+        background-color: black;
+        width: 100%;
+    }
+
+
+
+    .ymwatch,.totalwatch,.banciwatch,.vocationwatch{
+        margin-top: 10px;
+        background-color: black;
+    }
+    .ymwatch.active,.totalwatch.active,.banciwatch.active,.vocationwatch.active{
+        color: white;
+    }
+
+    .caret{
+        border-left: 4px solid;
+        border-top: 4px solid transparent;
+        border-bottom: 4px solid transparent;
+        height: 0px;
+        width: 0px;
+        line-height: normal;
+        display: inline-block;
+    }
+
+
+</style>
+
+
+<script type="text/javascript">
+
+    var  xaixs = [];
+    // 分类查看类型
+    var si  = 2;
+    //
+    var   mychart = echarts.init(document.getElementById('container'));
+    //服务器 api参数
+    var  serverparams = {
+          year:'2017',
+          month:'10'
+
+    };
+
+    var   days  = [];
+
+    var   curyear = $("#curyear").textContent;
+    var   curmoth = $("#btncurm").html;
+    var options = {
+        title : {
+            text: '当月订单人数统计',
+            subtext: ''
+        },
+        tooltip : {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['人数','订单数']
+        },
+        //右上角工具条
+        toolbox: {
+            show : true,
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                magicType : {show: true, type: ['line', 'bar']},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        calculable : true,
+        xAxis : [
+            {
+                type : 'category',
+                boundaryGap : false,
+                data : ['周一','周二','周三','周四','周五','周六','周日']
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value',
+                axisLabel : {
+                    formatter: '{value} '
+                }
+            }
+        ],
+        series : [
+            {
+                name:'人数',
+                type:'line',
+                data:[11, 11, 15, 13, 12, 13, 10],
+                markPoint : {
+                    data : [
+                        {type : 'max', name: '最大值'},
+                        {type : 'min', name: '最小值'}
+                    ]
+                },
+                markLine : {
+                    data : [
+                        {type : 'average', name: '平均值'}
+                    ]
+                }
+            },
+            {
+                name:'订单数',
+                type:'line',
+                data:[1, 10, 2, 5, 3, 2, 0],
+                markPoint : {
+                    data : [
+//                        {name : '周最低', value : -2, xAxis: 1, yAxis: -1.5}
+                        {type : 'min', name: '周最低'}
+                    ]
+                },
+                markLine : {
+                    data : [
+                        {type : 'average', name : '平均值'}
+                    ]
+                }
+            }
+        ]
+    };
+
+
+
+    $(function() {
+//        配置 页面信息
+        $('.ymwatch  , .vocationwatch , .totalwatch').click(function(e){//给id为btn的元素添加点击事件
+
+
+
+            var atargtet = $(e.target);
+
+            if  (atargtet.text() == "节假日"){
+
+                $(window).attr('location','vacation.html');
+
+            }
+
+           else if  (atargtet.text() == "班次客流量") {
+
+                $(window).attr('location', 'rangetotal.html');
+
+            }
+            else if  (atargtet.text() == "总客流量") {
+
+                $(window).attr('location', 'total.html');
+
+            }
+        });
+
+
+        $('#yearlist').on('click', function(e) {
+            //获取到点击的dom对象
+            var atarget = $(e.target);
+
+            $('#btncury').html(atarget.text());
+            serverparams['year'] =  atarget.text();
+            curinfo();
+            updateinfo();
+        })
+
+        $('#monthlist').on('click', function(e) {
+
+
+            //获取到点击的dom对象
+            var atarget = $(e.target);
+
+
+            $('#btncurm').html(atarget.text());
+            serverparams['month'] =  atarget.text();
+            curinfo();
+            updateinfo();
+        })
+        configinfo();
+        updateinfo();
+    });
+    //假定数据
+//    var   assumedata = [{
+//                    data:[
+//                        {
+//                            date:'2017-10-01',
+//                            orderCount:6622,
+//                            peopleCount:13276
+//
+//                        },
+//                        {
+//                            date:'2017-10-02',
+//                            orderCount:5544,
+//                            peopleCount:13276
+//
+//                        },
+//                        {
+//                            date:'2017-10-06',
+//                            orderCount:8797,
+//                            peopleCount:12312
+//
+//                        },
+//                        {
+//                            date:'2017-10-08',
+//                            orderCount:6622,
+//                            peopleCount:13276
+//
+//                        },
+//                        {
+//                            date:'2017-10-9',
+//                            orderCount:2113,
+//                            peopleCount:2287
+//
+//                        },
+//                        {
+//                            date:'2017-10-11',
+//                            orderCount:6622,
+//                            peopleCount:13276
+//
+//                        }
+//
+//
+//                    ]
+//
+//
+//    },{
+//        data:[
+//            {
+//                date:'2017-09-01',
+//                orderCount:6622,
+//                peopleCount:13276
+//
+//            },
+//            {
+//                date:'2017-09-02',
+//                orderCount:5544,
+//                peopleCount:13276
+//
+//            },
+//            {
+//                date:'2017-09-10',
+//                orderCount:8797,
+//                peopleCount:12312
+//
+//            },
+//            {
+//                date:'2017-09-11',
+//                orderCount:6622,
+//                peopleCount:13276
+//
+//            },
+//            {
+//                date:'2017-09-19',
+//                orderCount:2113,
+//                peopleCount:2287
+//
+//            },
+//            {
+//                date:'2017-09-30',
+//                orderCount:6622,
+//                peopleCount:13276
+//
+//            }
+//
+//
+//        ]
+//
+//
+//    }];
+
+
+    function   configinfo(){
+
+
+
+         days = [];
+        //获取当前时间
+         var date=new Date;
+
+       var year=date.getFullYear();
+       var month=date.getMonth()+1;
+        var month =(month<10 ? "0"+month:month);
+        $("#btncury").text(year);
+        $("#btncurm").text(month);
+        var   day = GetDays(year,month);
+
+
+        for (var i=0;i<day;i++)
+        {
+            days.push(i+1);
+
+
+        }
+        options['xAxis'][0]['data'] = days;
+
+
+//        mychart.setOption(options);
+    }
+    
+    function  curinfo() {
+
+        days = [];
+        var  cury = $("#btncury").text();
+
+        var   curm = $("#btncurm").text();
+
+        var   day = GetDays(cury,curm);
+
+
+        for (var i=0;i<day;i++)
+        {
+            days.push(i+1);
+
+        }
+        options['xAxis'][0]['data'] = days;
+//        mychart.setOption(options);
+    }
+
+
+//     更新绘图
+    function updateinfo() {
+        var  baseurl = urlapi('index');
+
+        var   curyear = $('#btncury').text();
+        var   month = $('#btncurm').text();
+
+
+        var   peplecounts =[];
+        //事先初始化一个数组
+        for  (var  i = 0 ;i<days;i++){
+            peplecounts.push(0);
+        }
+
+        var   ordercounts = [];
+
+        for  (var  i = 0 ;i<days;i++){
+            ordercounts.push(0);
+        }
+        baseurl = baseurl.replace('yyyy1',$.trim(curyear));
+        baseurl = baseurl.replace('yyyy2',$.trim(curyear));
+        baseurl = baseurl.replace('ssss',PrefixInteger(month,2) + '-' +'01');
+        baseurl = baseurl.replace('dddd',PrefixInteger(month,2) + '-' + days.length.toString());
+
+        $.ajax({
+            url:baseurl,
+            type:'get',
+            success:function (data) {
+                var   json = eval(data);
+                var   datas = json['data'];
+
+                //当前月份和当前
+                if  (datas.length == days){
+                    peplecounts = [];
+                    ordercounts = [];
+                    //天数相同的  直接赋值
+                    for  (var  i = 0 ; i<datas.length;i++){
+                        peplecounts.push(datas[i]['pepleCount']);
+                        ordercounts.push(datas[i]['orderCount']);
+                    }
+                }
+                //表示当前月份有些天没有
+                else  {
+                    //遍历拿到 具有数据的天数
+                    var hasdatasdays = [];
+                    for  (var  i = 0 ; i<datas.length;i++){
+                       var   date = datas[i]['date'];
+                       var  aday = date.substring(8,10);
+                        hasdatasdays.push(parseInt(aday) );
+                    }
+                    for  (var  i = 0 ;i<hasdatasdays.length;i++) {
+                         var  index = hasdatasdays[i] - 1;
+                        peplecounts[index] = datas[i]['peopleCount'];
+                        ordercounts[index] = datas[i]['orderCount'];
+                    }
+                }
+                options['series'][0]['data'] = peplecounts;
+                options['series'][1]['data'] = ordercounts;
+                var   newxaix = [];
+                for   (i = 0; i<days.length;i++){
+
+                    var  detail = curyear + '-' + month + '-' + days[i];
+
+                    var   week = getWeek(detail);
+                    var   base =  days[i] +   week;
+
+                    newxaix.push(base);
+
+                }
+                options['xAxis'][0]['data'] = newxaix;
+
+                mychart.setOption(options);
+            },
+            error:function (error) {
+                var  json  = indexlocdata();
+
+                var   datas = json['data'];
+
+                //当前月份和当前
+                if  (datas.length == days){
+                    peplecounts = [];
+                    ordercounts = [];
+                    //天数相同的  直接赋值
+                    for  (var  i = 0 ; i<datas.length;i++){
+                        peplecounts.push(datas[i]['pepleCount']);
+                        ordercounts.push(datas[i]['orderCount']);
+                    }
+                }
+                //表示当前月份有些天没有
+                else  {
+                    //遍历拿到 具有数据的天数
+                    var hasdatasdays = [];
+                    for  (var  i = 0 ; i<datas.length;i++){
+                        var   date = datas[i]['date'];
+                        var  aday = date.substring(8,10);
+                        hasdatasdays.push(parseInt(aday) );
+                    }
+                    for  (var  i = 0 ;i<hasdatasdays.length;i++) {
+                        var  index = hasdatasdays[i] - 1;
+                        peplecounts[index] = datas[i]['peopleCount'];
+                        ordercounts[index] = datas[i]['orderCount'];
+                    }
+                }
+                options['series'][0]['data'] = peplecounts;
+                options['series'][1]['data'] = ordercounts;
+                mychart.setOption(options);
+
+            }
+        });
+
+
+
+        //合并多个网络请求结果
+//        var  tasks = [];
+//
+//
+//
+//
+//        for (var i = 1 ;i<=12;i++){
+//            var   aurl =  baseurl + PrefixInteger(i,2);
+//            tasks.push(aurl);
+//        }
+//
+//        var    ajaxtask = [];
+//        for (var i = 0 ;i<12;i++){
+//
+//            var   ajtsk =  $.ajax(tasks[i]);
+//            ajaxtask.push(ajtsk);
+//
+//        }
+
+
+
+//        $.when(ajaxtask).done(function (datas) {
+//               var    newaxixs = [];
+//               var    newyxixs = [];
+//
+//
+//              for (var j = 0 ;j<datas.length ; j++){
+//                  //设置相应的值
+//
+//
+//
+//
+//
+//
+//
+//              }
+//
+//            mychart.setOption(options);
+//
+//
+//        });
+//        si += 1;
+//        if  (si >= 15) {
+//
+//            si = si%15;
+//
+//        }
+//        $.ajax({
+//            url:'http://gank.io/api/data/%E7%A6%8F%E5%88%A9/10/'+ si,
+//            type:'get',
+//            success:function(data){
+//                res=eval(data);
+//                 $("#aimag").attr('src',data['results'][0]['url']);
+//            }
+//        });
+    }
+
+
+
+
+</script>
