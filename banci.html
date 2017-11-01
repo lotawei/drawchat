@@ -293,7 +293,7 @@
 
     $(function() {
 //        配置 页面信息
-        var   banciurl = "http://112.74.40.157:6789/trips";
+        var   banciurl = "http://192.168.2.122:6789/trips";
         configinfo();
         $.ajax({
             url:banciurl,
@@ -457,7 +457,7 @@
     function updateinfo() {
 
 
-        var   analyseurl = "http://112.74.40.157:6789/tripByDateRange?start=ssss&end=eeee&departId=dddd&arriveId=aaaa";
+        var   analyseurl = "http://112.74.40.157:6789/tripByDateRange?start=ssss&end=eeee";
 
         var   curyear = $('#btncury').text();
         var   month = $('#btncurm').text();
@@ -475,8 +475,7 @@
 
         analyseurl = analyseurl.replace('ssss',startid);
         analyseurl  = analyseurl.replace('eeee',endid);
-        analyseurl = analyseurl.replace('dddd',departid);
-        analyseurl = analyseurl.replace('aaaa',arriveid);
+
 
         var   peplecounts =[];
         //事先初始化一个数组
@@ -517,6 +516,7 @@
                         var  aday = date.substring(8,10);
                         hasdatasdays.push(parseInt(aday) );
                     }
+                    console.log(hasdatasdays);
                     for  (var  i = 0 ;i<hasdatasdays.length;i++) {
                         var  index = hasdatasdays[i] - 1;
                         peplecounts[index] = datas[i]['peopleCount'];

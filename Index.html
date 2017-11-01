@@ -174,85 +174,13 @@
 
     var   curyear = $("#curyear").textContent;
     var   curmoth = $("#btncurm").html;
-    var options = {
-        title : {
-            text: '当月订单人数统计',
-            subtext: ''
-        },
-        tooltip : {
-            trigger: 'axis'
-        },
-        legend: {
-            data:['人数','订单数']
-        },
-        //右上角工具条
-        toolbox: {
-            show : true,
-            feature : {
-                mark : {show: true},
-                dataView : {show: true, readOnly: false},
-                magicType : {show: true, type: ['line', 'bar']},
-                restore : {show: true},
-                saveAsImage : {show: true}
-            }
-        },
-        calculable : true,
-        xAxis : [
-            {
-                type : 'category',
-                boundaryGap : false,
-                data : ['周一','周二','周三','周四','周五','周六','周日']
-            }
-        ],
-        yAxis : [
-            {
-                type : 'value',
-                axisLabel : {
-                    formatter: '{value} '
-                }
-            }
-        ],
-        series : [
-            {
-                name:'人数',
-                type:'line',
-                data:[11, 11, 15, 13, 12, 13, 10],
-                markPoint : {
-                    data : [
-                        {type : 'max', name: '最大值'},
-                        {type : 'min', name: '最小值'}
-                    ]
-                },
-                markLine : {
-                    data : [
-                        {type : 'average', name: '平均值'}
-                    ]
-                }
-            },
-            {
-                name:'订单数',
-                type:'line',
-                data:[1, 10, 2, 5, 3, 2, 0],
-                markPoint : {
-                    data : [
-//                        {name : '周最低', value : -2, xAxis: 1, yAxis: -1.5}
-                        {type : 'min', name: '周最低'}
-                    ]
-                },
-                markLine : {
-                    data : [
-                        {type : 'average', name : '平均值'}
-                    ]
-                }
-            }
-        ]
-    };
+    var options = getoptions();
 
 
 
     $(function() {
 //        配置 页面信息
-        $('.ymwatch  , .vocationwatch , .totalwatch').click(function(e){//给id为btn的元素添加点击事件
+        $('.ymwatch  , .banciwatch,.vocationwatch , .totalwatch').click(function(e){//给id为btn的元素添加点击事件
 
 
 
@@ -264,12 +192,12 @@
 
             }
 
-           else if  (atargtet.text() == "班次客流量") {
+           else if  ($.trim( atargtet.text()) == "班次客流量") {
 
                 $(window).attr('location', 'rangetotal.html');
 
             }
-            else if  (atargtet.text() == "总客流量") {
+            else if  ($.trim( atargtet.text()) == "总客流量") {
 
                 $(window).attr('location', 'total.html');
 
@@ -459,6 +387,11 @@
         for  (var  i = 0 ;i<days;i++){
             ordercounts.push(0);
         }
+        var   salecounts = [];
+
+        for  (var  i = 0 ;i<xaixs.length;i++){
+            salecounts.push(0);
+        }
         baseurl = baseurl.replace('yyyy1',$.trim(curyear));
         baseurl = baseurl.replace('yyyy2',$.trim(curyear));
         baseurl = baseurl.replace('ssss',PrefixInteger(month,2) + '-' +'01');
@@ -479,6 +412,7 @@
                     for  (var  i = 0 ; i<datas.length;i++){
                         peplecounts.push(datas[i]['pepleCount']);
                         ordercounts.push(datas[i]['orderCount']);
+                        salecounts.push(datas[i]['income']);
                     }
                 }
                 //表示当前月份有些天没有
@@ -494,10 +428,12 @@
                          var  index = hasdatasdays[i] - 1;
                         peplecounts[index] = datas[i]['peopleCount'];
                         ordercounts[index] = datas[i]['orderCount'];
+                        salecounts[index] = datas[i]['income'];
                     }
                 }
                 options['series'][0]['data'] = peplecounts;
                 options['series'][1]['data'] = ordercounts;
+                options['series'][2]['data'] = salecounts;
                 var   newxaix = [];
                 for   (i = 0; i<days.length;i++){
 
@@ -541,10 +477,14 @@
                         var  index = hasdatasdays[i] - 1;
                         peplecounts[index] = datas[i]['peopleCount'];
                         ordercounts[index] = datas[i]['orderCount'];
+                        salecounts[index] = datas[i]['income'];
                     }
                 }
                 options['series'][0]['data'] = peplecounts;
                 options['series'][1]['data'] = ordercounts;
+                options['series'][2]['data'] = salecounts;
+
+
                 mychart.setOption(options);
 
             }
