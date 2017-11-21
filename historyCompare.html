@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,30 +5,24 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <link rel="stylesheet"  href="WebStyle.css">
-    <script src= "echarts.min.js"></script>
-    <title>各项趋势图</title>
 
+    <script src= "echarts.min.js"></script>
+    <script src= "jshelper.js"></script>
+    <title>各项趋势图</title>
+    <link rel="stylesheet"  href="WebStyle.css">
     <!-- Bootstrap core CSS -->
 
     <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="jshelper.js"></script>
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="jshelper.js"></script>
     <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="layDate-v5.0.7/laydate/laydate.js"></script>
-
-
-
-
 </head>
 <body>
-<div id="top" style="width: 100%;height: 70px;position: relative" >
-    <nav class="navbar  navbar-fixed-top ">
-        <div class="container cusbar">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+<div id="top" style="width: 100%;height: 70px;position: relative;"  >
+    <nav class="navbar  navbar-fixed-top   ">
+        <div class="container cusbar  ">
+            <div class="navbar-header  ">
+                <button type="button" class="navbar-toggle collapsed " data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -51,24 +43,27 @@
         </div>
     </nav>
 </div>
-<div class="btn-group dropdown " >
-    <button class="btn btn-primary" style="width: 80px" disabled="disabled" >起始时间： </button>
+<div class="btn-group dropdown " id="ylist">
+    <button class="btn btn-primary"  disabled="disabled" >起始月份： </button>
+    <!--当前年份-->
+    <button type="button" class="btn btn-primary dropdown-toggle" id="btncurm"  data-toggle="dropdown">未知
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu" id="curmlist">
 
 
-    <input type="text" class="demo-input" placeholder="请选择日期" id="date1">
-
-
-
+    </ul>
 </div>
+<div class="btn-group dropdown" id="mlist">
+    <button class="btn btn-primary" id="lbldis" style="width: 80px" disabled="disabled" >截止月份： </button>
+    <!-- 当前月份 -->
+    <button type="button" class="btn btn-primary dropdown-toggle" id="btnnext" data-toggle="dropdown">未知
+        <span class="caret" ></span>
+    </button>
+    <ul class="dropdown-menu"  role="menu" id="nextlist" aria-labelledby="btnnext">
 
-<div class="btn-group dropdown" >
-    <button class="btn btn-primary" id="lbldis" style="width: 80px" disabled="disabled" >截止日期： </button>
 
-    <input type="text" class="demo-input" placeholder="请选择日期" id="date2">
-
-
-
-
+    </ul>
 </div>
 
 <div class="btn-group dropdown" id="banciconter">
@@ -94,21 +89,14 @@
     <ul class="dropdown-menu"  role="menu" id="shikelist" aria-labelledby="btnshike">
     </ul>
 </div>
-<!--<button class="btn btn-primary" style="background-color: black;width: 80px;margin-left: 20px" id = "btndraw"  >绘制</button>-->
 
-<div id="container">
+<div id="container"  >
 
 
 
 </div>
-<div id="loadgif"  style="width:66px;height:66px;position:absolute;top:50%;left:50%;text-align:center;">
-    　　<img  alt="图片不见啦..." src="loading.gif" style="width:100%;" />
-    <label >绘制中..</label>
 
-</div>
-
-
-
+<img id="aimag" src="">
 
 </body>
 </html>
@@ -119,45 +107,28 @@
 
 <script type="text/javascript">
 
-
-
     var  xaixs = [];
-    //
-    var   mychart = echarts.init(document.getElementById('container'));
-    //服务器 api参数
-    var  serverparams = {
-        year:'2017',
-        month:'10'
 
-    };
-    var  starid = '2017-01-01';
-    var  endid = '2017-10-10';
-    var  schedule = '07:30';
-    var options = getoptions();
+
+
+    var   mychart = echarts.init(document.getElementById('container'));
     var  bancidic = [];
+
+    var   days  = [];
+
+    var   curm = $("#btncurm").textContent;
+    var   curmoth = $("#btnnext").html;
+    var options = getoptions();
+    var  dic  = {};
 
 
     $(function() {
-//        配置 页面信息
-        configinfo();
-        laydate.render({
-            elem: '#date1'
-            ,done: function(value, date, endDate) {
-                starid =  value;
-                resetshike();
-                updateinfo();
 
-            }
-        });
-        laydate.render({
-            elem: '#date2' //指定元素
-            ,done: function(value, date, endDate) {
-                endid =  value;
-                resetshike();
-                updateinfo();
+        for  (var i = 1 ;i<= 12;i++){
+            $("#nextlist").append('<li><button  class="btn-primary btnstyle">' + i +'</button></li>');
+            $("#curmlist").append('<li><button  class="btn-primary btnstyle">' + i +'</button></li>');
+        }
 
-            }
-        });
         var   banciurl = urlapi('trip');
 
 
@@ -167,10 +138,6 @@
             success:function(data){
                 var  res=eval(data);
                 var  json = res['data'];
-
-
-
-
                 for  (var i = 0 ;i< json.length;i++){
 
                     bancidic.push(json[i]);
@@ -182,12 +149,6 @@
 
                     $("#bancilsit").append('<li><button  class="btn-primary btnstyle">' + result +'</button></li>');
                 }
-
-
-
-
-
-
                 updateinfo();
             },
             error:function (e) {
@@ -195,44 +156,37 @@
             }
         });
 
-        $('.ymwatch  , .vocationwatch , .totalwatch , .banciwatch').click(function(e){//给id为btn的元素添加点击事件
+//        配置 页面信息
+        $('  .banciwatch,.vocationwatch , .totalwatch , .hiswatchwein').click(function(e){//给id为btn的元素添加点击事件
 
 
 
             var atargtet = $(e.target);
+
             if  (atargtet.text() == "节假日"){
 
                 $(window).attr('location','vacation.html');
 
             }
 
-            else if  ($.trim( atargtet.text()) == "年月查看") {
-
-                $(window).attr('location', 'Index.html');
-
-            }
-            else if  ($.trim(atargtet.text()) == "班次客流量") {
+            else if  ($.trim( atargtet.text()) == "班次客流量") {
 
                 $(window).attr('location', 'rangetotal.html');
 
             }
 
-            else if  ($.trim( atargtet.text()) == "总客流量") {
+            else if  ($.trim(atargtet.text()) == "历史同期") {
 
-                $(window).attr('location', 'total.html');
+                $(window).attr('location', 'historyCompare.html');
 
             }
+            else if  ($.trim(atargtet.text()) == "年月查看") {
 
+                $(window).attr('location', 'Index.html');
 
+            }
         });
 
-        function resetshike() {
-
-            //将 时刻表重置最初状态
-            $('#btnshike').text('所有');
-
-            $('#shikelist').empty();
-        }
 
         $('#bancilsit').on('click', function(e) {
 
@@ -256,193 +210,191 @@
 
             updateinfo();
         })
+        $('#curmlist').on('click', function(e) {
+            //获取到点击的dom对象
+            var atarget = $(e.target);
 
+            $('#btncurm').html(atarget.text());
 
-//        $("#btndraw").click(function() {
-//
-//                updateinfo();
-//
-//
-//        } )
+            curinfo();
 
+        });
 
+        $('#nextlist').on('click', function(e) {
+            //获取到点击的dom对象
+            var atarget = $(e.target);
+            $('#btnnext').html(atarget.text());
+            curinfo();
+            updateinfo();
+        });
+        configinfo();
 
     });
     function   configinfo(){
-
-
+        days = [];
         //获取当前时间
         var date=new Date;
-        var  year=date.getFullYear();
+        var year=date.getFullYear();
         var month=date.getMonth()+1;
-        var  day = date.getDate();
-        endid =  year.toString() +  '-' + PrefixInteger(month,2) + '-' + PrefixInteger(day,2);
+        var month =(month<10 ? "0"+month:month);
+        $("#btncurm").text(month);
+        $("#btnnext").text(month + 1);
+       starid =   getperiod('2017',month,month+1)['startid'];
+        endid =   getperiod('2017',month,month+1)['endid'];
+        var   day = getDays(starid,endid);
+        console.log(day);
+        for (var i=0;i<day;i++)
+        {
+            days.push(i+1);
+        }
+        options['xAxis'][0]['data'] = days;
+    }
+
+    function  curinfo() {
+
+        days = [];
+        var  cury = $("#btncurm").text();
+
+        var   curm = $("#btnnext").text();
+
+        var   day = GetDays(cury,curm);
 
 
-        $("input[id='date1']").val(starid);
-        $("input[id='date2']").val(endid);
+        for (var i=0;i<day;i++)
+        {
+            days.push(i+1);
+
+        }
+        options['xAxis'][0]['data'] = days;
 
     }
+
+
     //     更新绘图
-    function updateinfo() {
+    function updateinfo(){
         var  shikedic = []; //时刻可能是需要变化的
-        var  analyseurl = urlapi('total');
+    var  analyseurl = urlapi('total');
 
-        starid  = $("input[id='date1']").val();
+    starid  = $.trim($('#btncurm').text());
 
-        endid  =  $("input[id='date2']").val();
-        var   curyear = $('#btncury').text();
-        var   month = $('#btncurm').text();
-        var   selectstrs =  $.trim($('#btnbanci').text()) ;
-        options['title']['subtext'] = selectstrs;
-        var    competnets =  selectstrs.split('-');
-        var  departid  = competnets[0];
-        var  arriveid = competnets[1];
-        analyseurl = analyseurl.replace('ssss',starid);
-        analyseurl  = analyseurl.replace('eeee',endid);
-        analyseurl = analyseurl.replace('dddd',departid);
-        analyseurl = analyseurl.replace('aaaa',arriveid);
-        console.log(analyseurl);
-        var  tempschedule = $.trim( $('#btnshike').text());
-        if   (tempschedule != '所有'){
+    endid  =  $.trim($('#btnnext').text());
+    var   curyear = $('#btncury').text();
+    var   month = $('#btncurm').text();
+    var   selectstrs =  $.trim($('#btnbanci').text()) ;
+    options['title']['subtext'] = selectstrs;
+    var    competnets =  selectstrs.split('-');
+    var  departid  = competnets[0];
+    var  arriveid = competnets[1];
+    analyseurl = analyseurl.replace('ssss',starid);
+    analyseurl  = analyseurl.replace('eeee',endid);
+    analyseurl = analyseurl.replace('dddd',departid);
+    analyseurl = analyseurl.replace('aaaa',arriveid);
+    console.log(analyseurl);
+    var  tempschedule = $.trim( $('#btnshike').text());
+    if   (tempschedule != '所有'){
+        analyseurl =  analyseurl + '&' + 'schedule=' +  tempschedule;
+    }
+    xaixs = getDays(starid,endid);
 
+    options['xAxis'][0]['data'] = xaixs;
+    var   peplecounts =[];
 
-            analyseurl =  analyseurl + '&' + 'schedule=' +  tempschedule;
+    for  (var  i = 0 ;i<xaixs.length;i++){
+        peplecounts.push(0);
+    }
+    var   ordercounts = [];
 
-        }
-        xaixs = getDays(starid,endid);
+    for  (var  i = 0 ;i<xaixs.length;i++){
+        ordercounts.push(0);
+    }
+    var   salecounts = [];
 
-        options['xAxis'][0]['data'] = xaixs;
-        var   peplecounts =[];
-
-        for  (var  i = 0 ;i<xaixs.length;i++){
-            peplecounts.push(0);
-        }
-        var   ordercounts = [];
-
-        for  (var  i = 0 ;i<xaixs.length;i++){
-            ordercounts.push(0);
-        }
-        var   salecounts = [];
-
-        for  (var  i = 0 ;i<xaixs.length;i++){
-            salecounts.push(0);
-        }
-        showloading();
+    for  (var  i = 0 ;i<xaixs.length;i++){
+        salecounts.push(0);
+    }
+    showloading();
 
 
-        $.ajax({
-            url:analyseurl,
-            type:'get',
-            success:function (data) {
-                hideload();
-                var   json = eval(data);
-                var   datas = json['data']['trips'];
-                if  (tempschedule == '所有'){
-                    var   shikeinfo = json['data']['schedules'];
-                    for  (var i = 0 ;i< shikeinfo.length;i++){
+    $.ajax({
+        url:analyseurl,
+        type:'get',
+        success:function (data) {
+            hideload();
+            var   json = eval(data);
+            var   datas = json['data']['trips'];
+            $("#shikelist").append('<li><button class="btn-primary btnstyle">' + '所有' +'</button></li>');
+            if  (tempschedule == '所有'){
+                var   shikeinfo = json['data']['schedules'];
+                for  (var i = 0 ;i< shikeinfo.length;i++){
 
-                        shikedic.push(shikeinfo[i]);
-                        var  result =  shikeinfo[i];
+                    shikedic.push(shikeinfo[i]);
+                    var  result =  shikeinfo[i];
 
-                        $("#shikelist").append('<li><button class="btn-primary btnstyle">' + result +'</button></li>');
-                    }
-
+                    $("#shikelist").append('<li><button class="btn-primary btnstyle">' + result +'</button></li>');
                 }
-
-
-
-                if    (datas.length == xaixs.length) {
-                    for  (var  i = 0 ;i<datas.length;i++) {
-                        //先做一个表映射
-                        peplecounts[i] = datas[i]['peopleCount'];
-                        ordercounts[i] = datas[i]['orderCount'];
-                        salecounts[i] = datas[i]['income'];
-                    }
-                }
-                else{
-
-
-                    //遍历拿到 具有数据的天数
-                    var hasdatasdays = [];
-                    for  (var  i = 0 ; i<datas.length;i++){
-
-                        var   date = datas[i]['date'];
-                        var  ay = date.substring(0,4);
-
-                        var  am = date.substring(5,7);
-                        var  aday = date.substring(8,10);
-
-
-                        hasdatasdays.push ( parseInt(ay).toString() + '-'+ parseInt(am).toString() + '-' + parseInt(aday).toString());
-
-
-                    }
-
-
-                    for  (var  i = 0 ;i<hasdatasdays.length;i++) {
-                        //先做一个表映射
-                        var   mmdate = hasdatasdays[i];
-
-
-                        var  index  = xaixs.indexOf(mmdate);
-                        peplecounts[index] = datas[i]['peopleCount'];
-                        ordercounts[index] = datas[i]['orderCount'];
-                        salecounts[index] = datas[i]['income'];
-
-                    }
-
-//
-//
-                }
-
-                options['series'][0]['data'] = peplecounts;
-
-
-
-                options['series'][1]['data'] = ordercounts;
-                options['series'][2]['data'] = salecounts;
-
-
-                var   newxaix = [];
-                for   (i = 0; i<xaixs.length;i++){
-
-                    var   week = getWeek(xaixs[i]);
-                    var   base =  xaixs[i] +   week;
-
-                    newxaix.push(base);
-
-                }
-                options['xAxis'][0]['data'] = newxaix;
-
-
-                mychart.setOption(options);
-
-
-
-            },
-            error:function (error) {
-
 
             }
-        });
+            if    (datas.length == xaixs.length) {
+                for  (var  i = 0 ;i<datas.length;i++) {
+                    //先做一个表映射
+                    peplecounts[i] = datas[i]['peopleCount'];
+                    ordercounts[i] = datas[i]['orderCount'];
+                    salecounts[i] = datas[i]['income'];
+                }
+            }
+            else{
+                //遍历拿到 具有数据的天数
+                var hasdatasdays = [];
+                for  (var  i = 0 ; i<datas.length;i++){
+                    var   date = datas[i]['date'];
+                    var  ay = date.substring(0,4);
+                    var  am = date.substring(5,7);
+                    var  aday = date.substring(8,10);
+                    hasdatasdays.push ( parseInt(ay).toString() + '-'+ parseInt(am).toString() + '-' + parseInt(aday).toString());
+
+                }
+                for  (var  i = 0 ;i<hasdatasdays.length;i++) {
+                    //先做一个表映射
+                    var   mmdate = hasdatasdays[i];
+                    var  index  = xaixs.indexOf(mmdate);
+                    peplecounts[index] = datas[i]['peopleCount'];
+                    ordercounts[index] = datas[i]['orderCount'];
+                    salecounts[index] = datas[i]['income'];
+                }
+            }
+
+            options['series'][0]['data'] = peplecounts;
+
+
+
+            options['series'][1]['data'] = ordercounts;
+            options['series'][2]['data'] = salecounts;
+
+
+            var   newxaix = [];
+            for   (i = 0; i<xaixs.length;i++){
+                var   week = getWeek(xaixs[i]);
+                var   base =  xaixs[i] +   week;
+                newxaix.push(base);
+            }
+            options['xAxis'][0]['data'] = newxaix;
+            mychart.setOption(options);
+        },
+        error:function (error) {
+
+
+        }
+    });
     }
-    function   showloading() {
+    function resetshike() {
 
-        $("#loadgif").show();
+        //将 时刻表重置最初状态
+        $('#btnshike').text('所有');
 
+        $('#shikelist').empty();
     }
-
-    function   hideload() {
-
-        $("#loadgif").hide();
-
-    }
-
 
 
 
 
 </script>
-
-
